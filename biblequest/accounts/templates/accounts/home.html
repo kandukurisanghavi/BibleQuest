@@ -1,0 +1,10 @@
+<!-- accounts/templates/accounts/home.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h2>Welcome to BibleQuest</h2>
+<p>This is the home page.</p>
+<p><a href="{% url 'login' %}">Login</a> | <a href="{% url 'register' %}">Register</a></p>
+{% endblock %}
