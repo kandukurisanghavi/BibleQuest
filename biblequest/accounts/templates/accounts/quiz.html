@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f2f5;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question h3 {
+            margin-bottom: 10px;
+        }
+        .question label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect-answer {
+            color: red;
+            font-weight: bold;
+        }
+        .submit-btn {
+            display: block;
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        #result h2 {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Bible Quiz</h1>
+        <form id="quiz-form">
+            {% for question in questions %}
+            <div class="question">
+                <h3>{{ forloop.counter }}. {{ question.question }}</h3>
+                <label><input type="radio" name="q{{ forloop.counter }}" value="a"> {{ question.option_a }}</label>
+                <label><input type="radio" name="q{{ forloop.counter }}" value="b"> {{ question.option_b }}</label>
+                <label><input type="radio" name="q{{ forloop.counter }}" value="c"> {{ question.option_c }}</label>
+                <label><input type="radio" name="q{{ forloop.counter }}" value="d"> {{ question.option_d }}</label>
+                <p id="answer-q{{ forloop.counter }}"></p>
+            </div>
+            {% endfor %}
+            <button type="button" class="submit-btn" onclick="submitQuiz()">Submit</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function submitQuiz() {
+            const form = document.getElementById('quiz-form');
+            const resultDiv = document.getElementById('result');
+            let score = 0;
+            let allAnswered = true;
+
+            const answers = {};
+            {% for question in questions %}
+            answers["q{{ forloop.counter }}"] = "{{ question.correct_answer }}";
+            {% endfor %}
+
+            for (const [question, answer] of Object.entries(answers)) {
+                const selected = form.elements[question].value;
+                if (!selected) {
+                    allAnswered = false;
+                    break;
+                }
+                if (selected === answer) {
+                    score++;
+                    document.getElementById(`answer-${question}`).innerText = `Correct answer: ${answer.toUpperCase()}`;
+                    document.getElementById(`answer-${question}`).classList.add('correct-answer');
+                } else {
+                    document.getElementById(`answer-${question}`).innerText = `Correct answer: ${answer.toUpperCase()}`;
+                    document.getElementById(`answer-${question}`).classList.add('incorrect-answer');
+                }
+            }
+
+            if (!allAnswered) {
+                resultDiv.innerHTML = `<h2>Please answer all the questions before submitting.</h2>`;
+            } else {
+                resultDiv.innerHTML = `<h2>Your score is: ${score} / ${Object.keys(answers).length}</h2>`;
+            }
+        }
+    </script>
+</body>
+</html>
