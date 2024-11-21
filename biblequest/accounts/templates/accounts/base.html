@@ -4,11 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="Interactive Bible Study App featuring daily devotionals, Bible quizzes, and discussion forums.">
+    <meta name="keywords" content="Bible, Devotionals, Quizzes, Christianity, Faith">
+    <title>{% block title %}Bible Quest{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
+    <header class="text-center my-4">
+        <img src="{% static 'images/logo.png' %}" alt="Bible Quest Logo - Interactive Bible Study App" class="logo">
+        <h1>Bible Quest</h1>
+        <p class="subtitle">Guided by Faith, Driven by Knowledge</p>
+    </header>
+    <main class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <p class="{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}{% endblock %}
-    </div>
+    </main>
+    <footer class="text-center my-4">
+        {% block footer %}
+        <p>&copy; 2024 Bible Quest. All Rights Reserved.</p>
+        {% endblock %}
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
