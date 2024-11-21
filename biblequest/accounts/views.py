@@ -1,39 +1,73 @@
 # accounts/views.py
+
 from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from .models import QuizQuestion, VerseOfTheDay
+import random
+import datetime
 
-def home(request):
-    return render(request, 'accounts/home.html')
-
+# Register View
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
+            user = form.save()
             login(request, user)
-            return redirect('/')
+            return redirect('home')
     else:
         form = UserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-def login_view(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('/')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'accounts/login.html', {'form': form})
+# Custom Login View
+class CustomLoginView(LoginView):
+    template_name = 'accounts/login.html'
+    redirect_authenticated_user = True
 
+    def get_success_url(self):
+        return reverse_lazy('home')
+
+# Home View
+@login_required
+def home(request):
+    current_hour = datetime.datetime.now().hour
+    user_name = request.user.username  # Assuming the user is logged in and authenticated
+
+    if current_hour < 12:
+        greeting = 'Good morning'
+    elif 12 <= current_hour < 18:
+        greeting = 'Good afternoon'
+    else:
+        greeting = 'Good evening'
+
+    context = {
+        'greeting': f"{greeting}, {user_name}! Welcome!"
+    }
+    return render(request, 'accounts/home.html', context)
+
+# Quiz View
+@login_required
+def quiz(request):
+    questions = list(QuizQuestion.objects.all())
+    random.shuffle(questions)
+    selected_questions = questions[:10]  # Select 10 random questions
+    return render(request, 'accounts/quiz.html', {'questions': selected_questions})
+
+# Verse of the Day View
+@login_required
+def verse_of_the_day(request):
+    verses = list(VerseOfTheDay.objects.all())
+    today = datetime.date.today()
+    day_of_year = today.timetuple().tm_yday
+    verse = verses[day_of_year % len(verses)]  # Select a verse based on the day of the year
+    return render(request, 'accounts/verse_of_the_day.html', {'verse': verse, 'date': today})
+
+# Logout View
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect('login')
+
+
