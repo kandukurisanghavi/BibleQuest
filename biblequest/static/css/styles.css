@@ -1,35 +1,67 @@
-/* static/css/styles.css */
 body {
     font-family: Arial, sans-serif;
-    background-image: url('../images/try.png.jpg'); /* Adjust the path if necessary */
+    text-align: center;
+    background-image: url('/static/images/home.jpg'); /* Adjust the path to your image */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    height: 100vh;
     margin: 0;
     padding: 0;
-    color: white; /* Make all text white */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Align content to start from the top */
     align-items: center;
-    height: 100vh;
 }
 
-.container, h2, p, a, img, button {
-    background: none !important; /* Remove any background color */
-    box-shadow: none !important; /* Remove any shadow effects */
-    border: none; /* Ensure no border appears */
-    margin: 0; /* Reset all margins */
-    padding: 0; /* Reset all padding */
+header {
+    background: linear-gradient(to right, #d4af37, #f4e8c1);
+    padding: 20px;
+    margin-top: 150px; /* Increase this value to move the header further down */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
 }
 
-h2, p {
-    color: white !important; /* Force text color to white */
-    text-shadow: 1px 1px 2px black; /* Optional: Add contrast to text */
-    text-align: center;
+.logo {
+    width: 100px;
+    height: auto;
 }
 
-a {
-    color: lightblue !important; /* Link color for better visibility */
+h1 {
+    font-size: 2.5em;
+    margin: 10px 0;
+    color: #333;
+}
+
+p.subtitle {
+    font-size: 1em; /* Adjust the font size for the subtitle */
+    font-style: italic;
+    color: #555;
+    margin-top: 10px; /* Adjust this value to move the subtitle down */
+}
+
+main {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.verse-of-the-day {
+    background-image: url('/static/images/day.jpg'); /* Adjust the path to your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
+    border-radius: 10px;
+    color: white; /* Ensure text is readable on the background */
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

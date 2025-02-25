@@ -9,15 +9,60 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'styles.css' %}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 15px 0;
+            background-color: #f8f9fa;
+        }
+
+        .logo {
+            width: 50px;
+            height: auto;
+            margin-top: 10px; /* Moves the header slightly downward */
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 5px 0;
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
-    <header class="text-center my-4">
+    <header>
         <img src="{% static 'images/logo.png' %}" alt="Bible Quest Logo - Interactive Bible Study App" class="logo">
         <h1>Bible Quest</h1>
         <p class="subtitle">Guided by Faith, Driven by Knowledge</p>
     </header>
-    <!-- Removed 'container' class -->
-    <main>
+    <main class="container main-content">
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
@@ -25,15 +70,17 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% block content %}{% endblock %}
+        <div class="form-container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
-    <footer class="text-center my-4">
+    <footer>
         {% block footer %}
         <p>&copy; 2024 Bible Quest. All Rights Reserved.</p>
         {% endblock %}
     </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.amazonaws.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
