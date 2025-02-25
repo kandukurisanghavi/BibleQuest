@@ -50,11 +50,12 @@ def home(request):
 
 # Quiz View
 @login_required
-def quiz(request):
-    questions = list(QuizQuestion.objects.all())
-    random.shuffle(questions)
-    selected_questions = questions[:10]  # Select 10 random questions
-    return render(request, 'accounts/quiz.html', {'questions': selected_questions})
+def select_difficulty(request):
+    return render(request, 'accounts/select_difficulty.html')
+
+def quiz(request, difficulty):
+    questions = QuizQuestion.objects.filter(difficulty=difficulty).order_by('?')[:10]
+    return render(request, 'accounts/quiz.html', {'questions': questions})
 
 # Verse of the Day View
 @login_required
@@ -69,5 +70,3 @@ def verse_of_the_day(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
-
-

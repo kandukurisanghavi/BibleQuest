@@ -1,0 +1,60 @@
+<!-- filepath: /c:/Users/HP/Major_Project/biblequest/accounts/templates/accounts/select_difficulty.html -->
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Select Difficulty{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: url('{% static "images/background.jpg" %}') no-repeat center center/cover;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .difficulty-selection {
+        background-color: rgba(255, 255, 255, 0.85);
+        padding: 20px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .difficulty-selection h1 {
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+    }
+
+    .difficulty-selection a {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: white;
+        background-color: #007bff;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .difficulty-selection a:hover {
+        background-color: #0056b3;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="difficulty-selection">
+    <h1>Select Quiz Difficulty</h1>
+    <a href="{% url 'quiz' 'easy' %}" class="btn btn-primary">Easy</a>
+    <a href="{% url 'quiz' 'medium' %}" class="btn btn-primary">Medium</a>
+    <a href="{% url 'quiz' 'hard' %}" class="btn btn-primary">Hard</a>
+</div>
+{% endblock %}

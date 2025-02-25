@@ -1,13 +1,13 @@
 # accounts/urls.py
-
 from django.urls import path
-from .views import CustomLoginView, register, home, quiz, verse_of_the_day, logout_view
+from . import views
 
 urlpatterns = [
-    path('', CustomLoginView.as_view(), name='login'),  # Root URL for login page
-    path('register/', register, name='register'),
-    path('home/', home, name='home'),
-    path('quiz/', quiz, name='quiz'),
-    path('verse_of_the_day/', verse_of_the_day, name='verse_of_the_day'),
-    path('logout/', logout_view, name='logout'),
+    path('register/', views.register, name='register'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('home/', views.home, name='home'),
+    path('select_difficulty/', views.select_difficulty, name='select_difficulty'),
+    path('quiz/<str:difficulty>/', views.quiz, name='quiz'),
+    path('verse_of_the_day/', views.verse_of_the_day, name='verse_of_the_day'),
 ]
