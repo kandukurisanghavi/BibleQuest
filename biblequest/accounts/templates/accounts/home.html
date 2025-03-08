@@ -1,3 +1,4 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\home.html -->
 <!-- accounts/templates/accounts/home.html -->
 {% extends 'accounts/base.html' %}
 {% load static %}
@@ -72,7 +73,7 @@
     <div class="card">
         <h5 class="card-title">Prayer Request</h5>
         <p class="card-text">Submit your prayer requests.</p>
-        <a href="#" class="btn btn-primary">Submit</a>
+        <a href="{% url 'prayer_request' %}" class="btn btn-primary">Submit</a> <!-- Updated link -->
     </div>
     <div class="card">
         <h5 class="card-title">Logout</h5>

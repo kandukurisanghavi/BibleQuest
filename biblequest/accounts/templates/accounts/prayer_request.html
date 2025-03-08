@@ -1,0 +1,17 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\prayer_request.html -->
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block title %}Prayer Request{% endblock %}
+
+{% block content %}
+<h2>Submit Your Prayer Request</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="prayer_request">Your Prayer Request:</label>
+        <textarea id="prayer_request" name="prayer_request" class="form-control" rows="5"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

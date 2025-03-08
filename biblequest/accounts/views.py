@@ -70,3 +70,6 @@ def verse_of_the_day(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+def prayer_request(request):
+    return render(request, 'accounts/prayer_request.html')
