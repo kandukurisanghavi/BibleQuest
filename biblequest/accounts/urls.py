@@ -11,4 +11,6 @@ urlpatterns = [
     path('quiz/<str:difficulty>/', views.quiz, name='quiz'),
     path('verse_of_the_day/', views.verse_of_the_day, name='verse_of_the_day'),
     path('prayer_request/', views.prayer_request, name='prayer_request'),
+    path('view_prayer_requests/', views.view_prayer_requests, name='view_prayer_requests'),
+    path('add_comment/<int:prayer_request_id>/', views.add_comment, name='add_comment'),
 ]
