@@ -1,4 +1,3 @@
-# accounts/urls.py
 from django.urls import path
 from . import views
 
@@ -13,4 +12,6 @@ urlpatterns = [
     path('prayer_request/', views.prayer_request, name='prayer_request'),
     path('view_prayer_requests/', views.view_prayer_requests, name='view_prayer_requests'),
     path('add_comment/<int:prayer_request_id>/', views.add_comment, name='add_comment'),
+    path('edit_comment/<int:comment_id>/', views.edit_comment, name='edit_comment'),
+    path('delete_comment/<int:comment_id>/', views.delete_comment, name='delete_comment'),
 ]

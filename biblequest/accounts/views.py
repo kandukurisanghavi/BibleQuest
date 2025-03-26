@@ -8,6 +8,10 @@ from django.contrib import messages
 from .models import QuizQuestion, VerseOfTheDay, PrayerRequest, Comment  # Import Comment model
 import random
 import datetime
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Comment
+
 
 
 # Register View
@@ -113,3 +117,23 @@ def add_comment(request, prayer_request_id):
             Comment.objects.create(prayer_request=prayer_request, user=request.user, text=comment_text)
             messages.success(request, "Your comment has been added.")
         return redirect('view_prayer_requests')
+    
+    
+@login_required
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    if request.method == 'POST':
+        new_text = request.POST.get('comment_text')
+        if new_text:
+            comment.text = new_text
+            comment.save()
+            messages.success(request, "Comment updated successfully.")
+    return redirect('view_prayer_requests')
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    if request.method == 'POST':
+        comment.delete()
+        messages.success(request, "Comment deleted successfully.")
+    return redirect('view_prayer_requests')
