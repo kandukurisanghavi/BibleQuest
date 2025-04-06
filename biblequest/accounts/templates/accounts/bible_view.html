@@ -1,0 +1,46 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\bible_view.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Bible{% endblock %}
+
+{% block content %}
+<div class="content">
+    <h2>Bible</h2>
+    <form method="get" action="{% url 'bible_view' %}">
+        <label for="book">Book:</label>
+        <input type="text" id="book" name="book" value="{{ book }}" placeholder="e.g., John, Genesis" required>
+        <label for="chapter">Chapter:</label>
+        <input type="number" id="chapter" name="chapter" value="{{ chapter }}" placeholder="e.g., 3">
+        <label for="verse">Verse:</label>
+        <input type="number" id="verse" name="verse" value="{{ verse }}" placeholder="e.g., 16">
+        <button type="submit" class="btn btn-primary">Get Bible Text</button>
+    </form>
+
+    <div class="bible-result">
+        {% if error_message %}
+            <div class="alert alert-danger">
+                {{ error_message }}
+            </div>
+        {% else %}
+            {% if verse %}
+                <h3>{{ book }} {{ chapter }}:{{ verse }}</h3>
+                <p>{{ bible_data }}</p>
+            {% elif chapter %}
+                <h3>{{ book }} Chapter {{ chapter }}</h3>
+                <ul>
+                    {% for verse in bible_data %}
+                        <li><strong>{{ verse.verse }}:</strong> {{ verse.text }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h3>{{ book }}</h3>
+                <ul>
+                    {% for verse in bible_data %}
+                        <li><strong>{{ verse.verse }}:</strong> {{ verse.text }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
