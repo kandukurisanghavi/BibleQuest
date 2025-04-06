@@ -7,12 +7,42 @@
 <div class="content">
     <h2>Bible</h2>
     <form method="get" action="{% url 'bible_view' %}">
-        <label for="book">Book:</label>
-        <input type="text" id="book" name="book" value="{{ book }}" placeholder="e.g., John, Genesis" required>
-        <label for="chapter">Chapter:</label>
-        <input type="number" id="chapter" name="chapter" value="{{ chapter }}" placeholder="e.g., 3">
-        <label for="verse">Verse:</label>
-        <input type="number" id="verse" name="verse" value="{{ verse }}" placeholder="e.g., 16">
+        <!-- Testament Selection -->
+        <label for="testament">Testament:</label>
+        <select id="testament" name="testament" onchange="this.form.submit()">
+            <option value="">Select Testament</option>
+            <option value="Old Testament" {% if testament == "Old Testament" %}selected{% endif %}>Old Testament</option>
+            <option value="New Testament" {% if testament == "New Testament" %}selected{% endif %}>New Testament</option>
+        </select>
+
+        <!-- Book Selection -->
+        {% if books %}
+            <label for="book">Book:</label>
+            <select id="book" name="book" onchange="this.form.submit()">
+                <option value="">Select Book</option>
+                {% for book_name in books.keys %}
+                    <option value="{{ book_name }}" {% if book == book_name %}selected{% endif %}>{{ book_name }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+
+        <!-- Chapter Selection -->
+        {% if chapters %}
+            <label for="chapter">Chapter:</label>
+            <select id="chapter" name="chapter" onchange="this.form.submit()">
+                <option value="">Select Chapter</option>
+                {% for chapter_number in chapters %}
+                    <option value="{{ chapter_number }}" {% if chapter|add:0 == chapter_number %}selected{% endif %}>{{ chapter_number }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+
+        <!-- Verse Selection -->
+        {% if chapter %}
+            <label for="verse">Verse:</label>
+            <input type="number" id="verse" name="verse" value="{{ verse }}" placeholder="e.g., 16">
+        {% endif %}
+
         <button type="submit" class="btn btn-primary">Get Bible Text</button>
     </form>
 
@@ -32,15 +62,11 @@
                         <li><strong>{{ verse.verse }}:</strong> {{ verse.text }}</li>
                     {% endfor %}
                 </ul>
-            {% else %}
-                <h3>{{ book }}</h3>
-                <ul>
-                    {% for verse in bible_data %}
-                        <li><strong>{{ verse.verse }}:</strong> {{ verse.text }}</li>
-                    {% endfor %}
-                </ul>
             {% endif %}
         {% endif %}
     </div>
+
+    <!-- Back Button -->
+    <button onclick="history.back()" class="btn btn-secondary">Back</button>
 </div>
 {% endblock %}

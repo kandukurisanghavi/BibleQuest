@@ -147,42 +147,95 @@ def delete_comment(request, comment_id):
         messages.success(request, "Comment deleted successfully.")
     return redirect('view_prayer_requests')
 
+from django.shortcuts import render
+from .utils import fetch_bible_data
+
+# Define the books of the Bible
+OLD_TESTAMENT_BOOKS = {
+    "Genesis": 50, "Exodus": 40, "Leviticus": 27, "Numbers": 36, "Deuteronomy": 34,
+    "Joshua": 24, "Judges": 21, "Ruth": 4, "1 Samuel": 31, "2 Samuel": 24,
+    "1 Kings": 22, "2 Kings": 25, "1 Chronicles": 29, "2 Chronicles": 36, "Ezra": 10,
+    "Nehemiah": 13, "Esther": 10, "Job": 42, "Psalms": 150, "Proverbs": 31,
+    "Ecclesiastes": 12, "Song of Solomon": 8, "Isaiah": 66, "Jeremiah": 52,
+    "Lamentations": 5, "Ezekiel": 48, "Daniel": 12, "Hosea": 14, "Joel": 3,
+    "Amos": 9, "Obadiah": 1, "Jonah": 4, "Micah": 7, "Nahum": 3, "Habakkuk": 3,
+    "Zephaniah": 3, "Haggai": 2, "Zechariah": 14, "Malachi": 4
+}
+
+NEW_TESTAMENT_BOOKS = {
+    "Matthew": 28, "Mark": 16, "Luke": 24, "John": 21, "Acts": 28,
+    "Romans": 16, "1 Corinthians": 16, "2 Corinthians": 13, "Galatians": 6,
+    "Ephesians": 6, "Philippians": 4, "Colossians": 4, "1 Thessalonians": 5,
+    "2 Thessalonians": 3, "1 Timothy": 6, "2 Timothy": 4, "Titus": 3,
+    "Philemon": 1, "Hebrews": 13, "James": 5, "1 Peter": 5, "2 Peter": 3,
+    "1 John": 5, "2 John": 1, "3 John": 1, "Jude": 1, "Revelation": 22
+}
 
 def bible_view(request):
     """
-    Handle user requests for Bible data (verse, chapter, or book).
+    Handle user requests for Bible data (testament, book, chapter, or verse).
     """
-    # Default to Genesis 1 if no input is provided
-    book = request.GET.get('book', 'Genesis')  # Default to "Genesis"
-    chapter = request.GET.get('chapter', '1')  # Default to Chapter 1
-    verse = request.GET.get('verse')  # Optional
+    testament = request.GET.get('testament')  # Old Testament or New Testament
+    book = request.GET.get('book')  # Selected book
+    chapter = request.GET.get('chapter')  # Selected chapter
+    verse = request.GET.get('verse')  # Selected verse
+    search_query = request.GET.get('search')  # Search query
 
     error_message = None
     bible_data = None
+    books = None
+    chapters = None
 
-    # Validate chapter and verse
-    try:
-        if chapter:
+    # Handle search query
+    if search_query:
+        try:
+            # Parse the search query (e.g., "Genesis 1:1" or "Psalms 23")
+            parts = search_query.split()
+            book = parts[0]
+            if len(parts) > 1:
+                chapter_and_verse = parts[1].split(":")
+                chapter = chapter_and_verse[0]
+                if len(chapter_and_verse) > 1:
+                    verse = chapter_and_verse[1]
+        except (IndexError, ValueError):
+            error_message = "Invalid search query. Use the format 'Book Chapter:Verse' (e.g., 'Genesis 1:1')."
+
+    # Load books based on the selected testament
+    if testament == "Old Testament":
+        books = OLD_TESTAMENT_BOOKS
+    elif testament == "New Testament":
+        books = NEW_TESTAMENT_BOOKS
+
+    # Load chapters based on the selected book
+    if book and books:
+        chapters = range(1, books.get(book, 0) + 1)
+
+    # Fetch the requested data if chapter and verse are provided
+    if book and chapter:
+        try:
             chapter = int(chapter)
-            if chapter <= 0:
-                raise ValueError("Chapter must be greater than 0.")
-        if verse:
-            verse = int(verse)
-            if verse <= 0:
-                raise ValueError("Verse must be greater than 0.")
-    except ValueError as e:
-        error_message = str(e)
+            if chapter <= 0 or (books and chapter > books.get(book, 0)):
+                raise ValueError("Invalid chapter number.")
+            if verse:
+                verse = int(verse)
+                if verse <= 0:
+                    raise ValueError("Invalid verse number.")
+        except ValueError as e:
+            error_message = str(e)
 
-    # Fetch the requested data if input is valid
-    if not error_message:
-        bible_data = fetch_bible_data(book, chapter, verse)
-        if isinstance(bible_data, str) and bible_data.startswith("Error"):
-            error_message = bible_data
+        if not error_message:
+            bible_data = fetch_bible_data(book, chapter, verse)
+            if isinstance(bible_data, str) and bible_data.startswith("Error"):
+                error_message = bible_data
 
     return render(request, 'accounts/bible_view.html', {
+        'testament': testament,
         'book': book,
         'chapter': chapter,
         'verse': verse,
         'bible_data': bible_data,
-        'error_message': error_message
+        'books': books,
+        'chapters': chapters,
+        'error_message': error_message,
+        'search_query': search_query
     })
