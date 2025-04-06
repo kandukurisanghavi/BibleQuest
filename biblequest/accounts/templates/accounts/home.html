@@ -1,5 +1,4 @@
 <!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\home.html -->
-<!-- accounts/templates/accounts/home.html -->
 {% extends 'accounts/base.html' %}
 {% load static %}
 
@@ -55,26 +54,35 @@
     <h4>{{ greeting }}</h4>
 </div>
 <div class="d-flex flex-wrap justify-content-center">
+    <!-- Bible Card -->
     <div class="card">
         <h5 class="card-title">Bible</h5>
         <p class="card-text">Read the Bible online.</p>
-        <a href="#" class="btn btn-primary">Explore</a>
+        <a href="{% url 'bible_view' %}" class="btn btn-primary">Explore</a>
     </div>
+
+    <!-- Quiz Card -->
     <div class="card">
         <h5 class="card-title">Quiz</h5>
         <p class="card-text">Test your knowledge with our quiz.</p>
         <a href="{% url 'select_difficulty' %}" class="btn btn-primary">Start</a>
     </div>
+
+    <!-- Verse of the Day Card -->
     <div class="card">
         <h5 class="card-title">Verse of the Day</h5>
         <p class="card-text">Be inspired by today's verse.</p>
         <a href="{% url 'verse_of_the_day' %}" class="btn btn-primary">View</a>
     </div>
+
+    <!-- Prayer Request Card -->
     <div class="card">
         <h5 class="card-title">Prayer Request</h5>
         <p class="card-text">Submit your prayer requests.</p>
-        <a href="{% url 'prayer_request' %}" class="btn btn-primary">Submit</a> <!-- Updated link -->
+        <a href="{% url 'prayer_request' %}" class="btn btn-primary">Submit</a>
     </div>
+
+    <!-- Logout Card -->
     <div class="card">
         <h5 class="card-title">Logout</h5>
         <p class="card-text">Sign out from your account.</p>
