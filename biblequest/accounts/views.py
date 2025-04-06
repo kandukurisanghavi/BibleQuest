@@ -11,6 +11,13 @@ import datetime
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Comment
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Comment, PrayerRequest
+from .utils import fetch_bible_data
+
+
 
 
 
@@ -124,10 +131,12 @@ def edit_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id, user=request.user)
     if request.method == 'POST':
         new_text = request.POST.get('comment_text')
-        if new_text:
+        if new_text.strip():  # Ensure the new text is not empty
             comment.text = new_text
             comment.save()
             messages.success(request, "Comment updated successfully.")
+        else:
+            messages.error(request, "Comment cannot be empty.")
     return redirect('view_prayer_requests')
 
 @login_required
@@ -137,3 +146,43 @@ def delete_comment(request, comment_id):
         comment.delete()
         messages.success(request, "Comment deleted successfully.")
     return redirect('view_prayer_requests')
+
+
+def bible_view(request):
+    """
+    Handle user requests for Bible data (verse, chapter, or book).
+    """
+    # Default to Genesis 1 if no input is provided
+    book = request.GET.get('book', 'Genesis')  # Default to "Genesis"
+    chapter = request.GET.get('chapter', '1')  # Default to Chapter 1
+    verse = request.GET.get('verse')  # Optional
+
+    error_message = None
+    bible_data = None
+
+    # Validate chapter and verse
+    try:
+        if chapter:
+            chapter = int(chapter)
+            if chapter <= 0:
+                raise ValueError("Chapter must be greater than 0.")
+        if verse:
+            verse = int(verse)
+            if verse <= 0:
+                raise ValueError("Verse must be greater than 0.")
+    except ValueError as e:
+        error_message = str(e)
+
+    # Fetch the requested data if input is valid
+    if not error_message:
+        bible_data = fetch_bible_data(book, chapter, verse)
+        if isinstance(bible_data, str) and bible_data.startswith("Error"):
+            error_message = bible_data
+
+    return render(request, 'accounts/bible_view.html', {
+        'book': book,
+        'chapter': chapter,
+        'verse': verse,
+        'bible_data': bible_data,
+        'error_message': error_message
+    })
