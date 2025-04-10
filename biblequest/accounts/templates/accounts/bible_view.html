@@ -48,9 +48,9 @@
         {% else %}
             {% if chapter %}
                 <h3>{{ book }} Chapter {{ chapter }}</h3>
-                <ul>
+                <ul style="list-style-type: none; padding-left: 0;"> <!-- Remove dots -->
                     {% for verse in bible_data %}
-                        <li><strong>{{ verse.verse }}:</strong> {{ verse.text }}</li>
+                        <li><strong>{{ verse.verse }}</strong>: {{ verse.text }}</li>
                     {% endfor %}
                 </ul>
             {% endif %}
