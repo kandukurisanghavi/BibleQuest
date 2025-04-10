@@ -37,12 +37,6 @@
             </select>
         {% endif %}
 
-        <!-- Verse Selection -->
-        {% if chapter %}
-            <label for="verse">Verse:</label>
-            <input type="number" id="verse" name="verse" value="{{ verse }}" placeholder="e.g., 16">
-        {% endif %}
-
         <button type="submit" class="btn btn-primary">Get Bible Text</button>
     </form>
 
@@ -52,10 +46,7 @@
                 {{ error_message }}
             </div>
         {% else %}
-            {% if verse %}
-                <h3>{{ book }} {{ chapter }}:{{ verse }}</h3>
-                <p>{{ bible_data }}</p>
-            {% elif chapter %}
+            {% if chapter %}
                 <h3>{{ book }} Chapter {{ chapter }}</h3>
                 <ul>
                     {% for verse in bible_data %}
@@ -66,7 +57,10 @@
         {% endif %}
     </div>
 
-    <!-- Back Button -->
-    <button onclick="history.back()" class="btn btn-secondary">Back</button>
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+        <button onclick="history.back()" class="btn btn-secondary">Back</button>
+        <a href="{% url 'home' %}" class="btn btn-primary">Home Page</a>
+    </div>
 </div>
 {% endblock %}
