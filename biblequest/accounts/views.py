@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Comment, PrayerRequest
 from .utils import fetch_bible_data
+from django.core.paginator import Paginator
 
 
 
@@ -110,10 +111,15 @@ def prayer_request(request):
 # View Prayer Requests (Prayer Wall)
 @login_required
 def view_prayer_requests(request):
+    # Fetch all prayer requests, ordered by the most recent
     prayer_requests = PrayerRequest.objects.all().order_by('-timestamp')
-    return render(request, 'accounts/view_prayer_requests.html', {'prayer_requests': prayer_requests})
 
+    # Paginate the prayer requests (e.g., 5 requests per page)
+    paginator = Paginator(prayer_requests, 5)  # Change 5 to the number of items you want per page
+    page_number = request.GET.get('page')  # Get the current page number from the query parameters
+    page_obj = paginator.get_page(page_number)  # Get the page object for the current page
 
+    return render(request, 'accounts/view_prayer_requests.html', {'page_obj': page_obj})
 # Add Comment to a Prayer Request
 @login_required
 def add_comment(request, prayer_request_id):

@@ -15,42 +15,42 @@
         border-left: 5px solid #007bff;
     }
 
-    .comment {
-        background-color: #e9ecef;
-        padding: 10px;
-        margin-top: 10px;
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a, .pagination span {
+        margin: 0 5px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
         border-radius: 5px;
+        text-decoration: none;
+        color: #007bff;
     }
 
-    .btn {
-        margin-top: 5px;
-        padding: 5px 10px;
-        font-size: 14px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+    .pagination a:hover {
+        background-color: #f1f1f1;
     }
 
-    .btn-warning {
-        background-color: #ffc107;
+    .pagination .current-page {
+        background-color: #007bff;
         color: white;
-    }
-
-    .btn-danger {
-        background-color: #dc3545;
-        color: white;
-    }
-
-    .btn-success {
-        background-color: #28a745;
-        color: white;
+        border-color: #007bff;
     }
 </style>
 
 <div class="content">
     <h2>Prayer Wall</h2>
 
-    {% for prayer in prayer_requests %}
+    <!-- Add Home Page Button at the Top -->
+    <div class="navigation-buttons mb-4">
+        <a href="{% url 'home' %}" class="btn btn-success">Home Page</a>
+    </div>
+
+    <!-- Display Prayer Requests -->
+    {% for prayer in page_obj %}
         <div class="prayer-request">
             <h5>{{ prayer.user.username }} ({{ prayer.timestamp|date:"F j, Y, g:i a" }})</h5>
             <p>{{ prayer.text }}</p>
@@ -59,22 +59,6 @@
             {% for comment in prayer.comments.all %}
                 <div class="comment">
                     <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
-                    {% if comment.user == request.user %}
-                        <!-- Edit and Delete buttons -->
-                        <a href="#" class="btn btn-sm btn-warning" onclick="toggleEditForm({{ comment.id }})">Edit</a>
-                        <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-
-                        <!-- Inline Edit Form -->
-                        <form method="post" action="{% url 'edit_comment' comment.id %}" id="edit-form-{{ comment.id }}" style="display: none; margin-top: 10px;">
-                            {% csrf_token %}
-                            <textarea name="comment_text" rows="2" class="form-control">{{ comment.text }}</textarea>
-                            <button type="submit" class="btn btn-sm btn-success">Save</button>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="toggleEditForm({{ comment.id }})">Cancel</button>
-                        </form>
-                    {% endif %}
                 </div>
             {% empty %}
                 <p>No comments yet. Be the first to comment!</p>
@@ -89,16 +73,18 @@
     {% empty %}
         <p>No prayer requests yet.</p>
     {% endfor %}
-</div>
 
-<script>
-    function toggleEditForm(commentId) {
-        const form = document.getElementById(`edit-form-${commentId}`);
-        if (form.style.display === "none" || form.style.display === "") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
-    }
-</script>
+    <!-- Pagination Controls -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        <span class="current-page">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
