@@ -92,34 +92,43 @@ def logout_view(request):
 
 @login_required
 def prayer_request(request):
-    form_submitted = False  # Track whether the form has been submitted
-    success_message = None  # Initialize the success message variable
+    form_submitted = False
+    success_message = None
 
     if request.method == 'POST':
         prayer_text = request.POST.get('prayer_request')
-        if prayer_text:
-            PrayerRequest.objects.create(user=request.user, text=prayer_text)
-            success_message = "Your prayer request has been submitted."  # Set the success message
-            form_submitted = True  # Mark the form as submitted
+        category = request.POST.get('category')  # Get the selected category
+        if prayer_text and category:
+            PrayerRequest.objects.create(user=request.user, text=prayer_text, category=category)
+            success_message = "Your prayer request has been submitted."
+            form_submitted = True
 
     return render(request, 'accounts/prayer_request.html', {
-        'form_submitted': form_submitted,  # Pass the form submission status to the template
-        'success_message': success_message  # Pass the success message to the template
+        'form_submitted': form_submitted,
+        'success_message': success_message,
     })
 
 
 # View Prayer Requests (Prayer Wall)
+from django.core.paginator import Paginator
+
 @login_required
 def view_prayer_requests(request):
-    # Fetch all prayer requests, ordered by the most recent
-    prayer_requests = PrayerRequest.objects.all().order_by('-timestamp')
+    category = request.GET.get('category')  # Get the selected category from the query parameters
+    if category:
+        prayer_requests = PrayerRequest.objects.filter(category=category).order_by('-timestamp')
+    else:
+        prayer_requests = PrayerRequest.objects.all().order_by('-timestamp')
 
-    # Paginate the prayer requests (e.g., 5 requests per page)
-    paginator = Paginator(prayer_requests, 5)  # Change 5 to the number of items you want per page
-    page_number = request.GET.get('page')  # Get the current page number from the query parameters
-    page_obj = paginator.get_page(page_number)  # Get the page object for the current page
+    paginator = Paginator(prayer_requests, 5)  # Paginate the prayer requests
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    return render(request, 'accounts/view_prayer_requests.html', {'page_obj': page_obj})
+    return render(request, 'accounts/view_prayer_requests.html', {
+        'page_obj': page_obj,
+        'selected_category': category,  # Pass the selected category to the template
+    })
+    
 # Add Comment to a Prayer Request
 @login_required
 def add_comment(request, prayer_request_id):
