@@ -17,6 +17,8 @@ from django.contrib import messages
 from .models import Comment, PrayerRequest
 from .utils import fetch_bible_data
 from django.core.paginator import Paginator
+import json  # For parsing JSON data
+from django.http import JsonResponse  # For returning JSON responses
 
 
 
@@ -73,6 +75,51 @@ def quiz(request, difficulty):
     questions = QuizQuestion.objects.filter(difficulty=difficulty).order_by('?')[:10]
     return render(request, 'accounts/quiz.html', {'questions': questions})
 
+from django.core.mail import EmailMultiAlternatives
+from django.http import JsonResponse
+import json
+
+def send_quiz_email(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            score = data.get('score')
+            total_questions = data.get('total_questions')
+
+            subject = "Your Quiz Results"
+            from_email = 'biblequesta@gmail.com'
+            to_email = [email]
+            html_content = f"""
+                <h2>Your Quiz Results</h2>
+                <p><strong>Score:</strong> {score} out of {total_questions}</p>
+            """
+
+            email_message = EmailMultiAlternatives(subject, "Your quiz results are attached.", from_email, to_email)
+            email_message.attach_alternative(html_content, "text/html")
+            email_message.send()
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            print(f"Email sending failed: {e}")
+            return JsonResponse({'success': False, 'error': str(e)})
+        
+from django.http import HttpResponse
+from io import BytesIO
+from reportlab.pdfgen import canvas
+
+def download_quiz_results(request):
+    score = request.GET.get('score', 0)
+    total_questions = request.GET.get('total_questions', 0)
+
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+    pdf.drawString(100, 800, "Quiz Results")
+    pdf.drawString(100, 780, f"Score: {score} out of {total_questions}")
+    pdf.save()
+
+    buffer.seek(0)
+    return HttpResponse(buffer, content_type='application/pdf')
 
 # Verse of the Day View
 @login_required

@@ -1,0 +1,33 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\comments_section.html -->
+<div class="comments">
+    {% for comment in comments %}
+        <div class="comment mb-2">
+            <strong>{{ comment.user.username }}</strong>: {{ comment.text }}
+            {% if comment.user == request.user %}
+                <!-- Edit and Delete buttons -->
+                <a href="#" class="btn btn-sm btn-warning" onclick="toggleEditForm({{ comment.id }})">Edit</a>
+                <form method="post" action="{% url 'delete_comment' comment.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+
+                <!-- Inline Edit Form -->
+                <form method="post" action="{% url 'edit_comment' comment.id %}" id="edit-form-{{ comment.id }}" style="display: none; margin-top: 10px;">
+                    {% csrf_token %}
+                    <textarea name="comment_text" rows="2" class="form-control">{{ comment.text }}</textarea>
+                    <button type="submit" class="btn btn-sm btn-success">Save</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="toggleEditForm({{ comment.id }})">Cancel</button>
+                </form>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+    {% endfor %}
+
+    <!-- Add Comment Form -->
+    <form method="post" action="{% url 'add_comment' prayer_id %}">
+        {% csrf_token %}
+        <textarea name="comment" rows="2" class="form-control mb-2" placeholder="Add a comment..."></textarea>
+        <button type="submit" class="btn btn-primary">Comment</button>
+    </form>
+</div>

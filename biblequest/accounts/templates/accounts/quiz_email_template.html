@@ -1,0 +1,51 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\quiz_email_template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #333;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Quiz Results</h2>
+        <p><strong>Score:</strong> {{ score }} out of {{ total_questions }}</p>
+
+        <h3>Correct Answers</h3>
+        <ul>
+            {% for question in correct_answers %}
+                <li>{{ question.question }} - <strong>{{ question.correct_answer }}</strong></li>
+            {% endfor %}
+        </ul>
+
+        <h3>Incorrect Answers</h3>
+        <ul>
+            {% for question in incorrect_answers %}
+                <li>{{ question.question }} - <strong>Correct Answer: {{ question.correct_answer }}</strong></li>
+            {% endfor %}
+        </ul>
+
+        <p>Thank you for taking the quiz!</p>
+    </div>
+</body>
+</html>

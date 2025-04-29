@@ -1,0 +1,10 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\prayer_request_card.html -->
+<div class="prayer-request mb-4">
+    <h5>{{ prayer.user.username }} ({{ prayer.timestamp|date:"F j, Y, g:i a" }})</h5>
+    <p><strong>Category:</strong> {{ prayer.get_category_display }}</p>
+    <p>{{ prayer.text }}</p>
+
+    <!-- Comments Section -->
+    <h6>Comments:</h6>
+    {% include 'accounts/comments_section.html' with comments=prayer.comments.all prayer_id=prayer.id %}
+</div>

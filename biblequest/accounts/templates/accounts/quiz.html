@@ -1,4 +1,4 @@
-<!-- filepath: /c:/Users/HP/Major_Project/biblequest/accounts/templates/accounts/quiz.html -->
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\quiz.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,6 +62,7 @@
     <div class="quiz-container">
         <h1>Bible Quiz</h1>
         <form id="quiz-form">
+            {% csrf_token %}
             {% for question in questions %}
             <div class="question">
                 <h3>{{ forloop.counter }}. {{ question.question }}</h3>
@@ -90,26 +91,76 @@
             {% endfor %}
 
             for (const [question, answer] of Object.entries(answers)) {
-                const selected = form.elements[question].value;
-                if (!selected) {
+                const selectedOptions = form.elements[question];
+                let selectedValue = null;
+
+                for (let option of selectedOptions) {
+                    if (option.checked) {
+                        selectedValue = option.value;
+                        break;
+                    }
+                }
+
+                const feedback = document.getElementById(`answer-${question}`);
+                if (!selectedValue) {
                     allAnswered = false;
                     break;
                 }
-                if (selected === answer) {
+
+                if (selectedValue === answer) {
                     score++;
-                    document.getElementById(`answer-${question}`).innerText = `Correct answer: ${answer.toUpperCase()}`;
-                    document.getElementById(`answer-${question}`).classList.add('correct-answer');
+                    feedback.innerText = `Correct answer: ${answer.toUpperCase()}`;
+                    feedback.className = 'correct-answer';
                 } else {
-                    document.getElementById(`answer-${question}`).innerText = `Correct answer: ${answer.toUpperCase()}`;
-                    document.getElementById(`answer-${question}`).classList.add('incorrect-answer');
+                    feedback.innerText = `Correct answer: ${answer.toUpperCase()}`;
+                    feedback.className = 'incorrect-answer';
                 }
             }
 
             if (!allAnswered) {
                 resultDiv.innerHTML = `<h2>Please answer all the questions before submitting.</h2>`;
-            } else {
-                resultDiv.innerHTML = `<h2>Your score is: ${score} / ${Object.keys(answers).length}</h2>`;
+                return;
             }
+
+            resultDiv.innerHTML = `
+                <h2>Your score is: ${score} / ${Object.keys(answers).length}</h2>
+                <form id="email-form">
+                    <label for="email">Do you want to send this report to your email?</label><br>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required><br><br>
+                    <button type="button" onclick="sendEmail(${score}, ${Object.keys(answers).length})">Send Email</button>
+                </form>
+            `;
+        }
+
+        function sendEmail(score, totalQuestions) {
+            const email = document.getElementById('email').value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+            fetch("{% url 'send_quiz_email' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+                body: JSON.stringify({
+                    email: email,
+                    score: score,
+                    total_questions: totalQuestions,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Quiz results sent to your email!");
+                } else {
+                    alert("Failed to send email. Please try again.");
+                    console.error("Backend Error:", data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
         }
     </script>
 </body>

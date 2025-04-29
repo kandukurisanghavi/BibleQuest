@@ -1,0 +1,18 @@
+<!-- filepath: c:\Users\HP\Major_Project\biblequest\accounts\templates\accounts\quiz_email.html -->
+Hi {{ user.username }},
+
+Here is your quiz report:
+
+Score: {{ score }} out of {{ total_questions }}
+
+Correct Answers:
+{% for question in correct_answers %}
+- {{ question.question }}: {{ question.correct_answer }}
+{% endfor %}
+
+Incorrect Answers:
+{% for question in incorrect_answers %}
+- {{ question.question }}: Correct Answer: {{ question.correct_answer }}
+{% endfor %}
+
+Thank you for taking the quiz!
