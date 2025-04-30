@@ -91,8 +91,8 @@ def send_quiz_email(request):
             from_email = 'biblequesta@gmail.com'
             to_email = [email]
             html_content = f"""
-                <h2>Your Quiz Results</h2>
-                <p><strong>Score:</strong> {score} out of {total_questions}</p>
+                <h3>Thank you for taking the quiz </h3>
+                <p><strong> Your Score is :</strong> {score} out of {total_questions}</p>
             """
 
             email_message = EmailMultiAlternatives(subject, "Your quiz results are attached.", from_email, to_email)
@@ -234,24 +234,20 @@ NEW_TESTAMENT_BOOKS = {
 }
 
 def bible_view(request):
-    """
-    Handle user requests for Bible data (testament, book, chapter, or verse).
-    """
-    testament = request.GET.get('testament')  # Old Testament or New Testament
-    book = request.GET.get('book')  # Selected book
-    chapter = request.GET.get('chapter')  # Selected chapter
-    verse = request.GET.get('verse')  # Selected verse
-    search_query = request.GET.get('search')  # Search query
+    testament = request.GET.get('testament')
+    book = request.GET.get('book')
+    chapter = request.GET.get('chapter')
+    verse = request.GET.get('verse')
+    search_query = request.GET.get('search')
 
     error_message = None
     bible_data = None
     books = None
     chapters = None
+    total_chapters = 0
 
-    # Handle search query
     if search_query:
         try:
-            # Parse the search query (e.g., "Genesis 1:1" or "Psalms 23")
             parts = search_query.split()
             book = parts[0]
             if len(parts) > 1:
@@ -260,19 +256,17 @@ def bible_view(request):
                 if len(chapter_and_verse) > 1:
                     verse = chapter_and_verse[1]
         except (IndexError, ValueError):
-            error_message = "Invalid search query. Use the format 'Book Chapter:Verse' (e.g., 'Genesis 1:1')."
+            error_message = "Invalid search query. Use the format 'Book Chapter:Verse'."
 
-    # Load books based on the selected testament
     if testament == "Old Testament":
         books = OLD_TESTAMENT_BOOKS
     elif testament == "New Testament":
         books = NEW_TESTAMENT_BOOKS
 
-    # Load chapters based on the selected book
     if book and books:
         chapters = range(1, books.get(book, 0) + 1)
+        total_chapters = books.get(book, 0)
 
-    # Fetch the requested data if chapter and verse are provided
     if book and chapter:
         try:
             chapter = int(chapter)
@@ -298,6 +292,7 @@ def bible_view(request):
         'bible_data': bible_data,
         'books': books,
         'chapters': chapters,
+        'total_chapters': total_chapters,
         'error_message': error_message,
         'search_query': search_query
     })
