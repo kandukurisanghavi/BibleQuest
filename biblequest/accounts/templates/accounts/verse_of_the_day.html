@@ -7,9 +7,9 @@
 {% block content %}
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         text-align: center;
-        background-image: url('{% static "images/try.png.jpg" %}'); /* Background image path */
+        background-image: url('{% static "images/try.png.jpg" %}'); /* Set the background image */
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -24,34 +24,63 @@
     }
 
     .verse-of-the-day {
-        color: black; /* Set text color to contrast against the background */
+        color: #333; /* Set a softer text color for better readability */
         text-align: center;
-        background: none; /* Remove any background color or image */
-        padding: 0; /* Remove padding */
-        margin: 0; /* Remove margins */
-        box-shadow: none; /* Remove any shadow effects */
-        border: none; /* Remove any border */
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.8); /* Slight white background for contrast */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        max-width: 600px;
+        width: 90%;
+        margin: 20px auto;
     }
 
-    .verse-of-the-day h2,
-    .verse-of-the-day p,
-    .verse-of-the-day a {
-        color: black; /* Ensure text is readable on the background */
-        margin: 0; /* Optional: fine-tune text spacing */
+    .verse-of-the-day h2 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #333;
     }
 
     .verse-of-the-day p {
-        font-size: 1.2rem; /* Adjust font size for better readability */
+        font-size: 1.2rem;
+        color: #555;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+
+    .verse-of-the-day p strong {
+        font-weight: bold;
+        color: #000;
     }
 
     .verse-of-the-day a {
+        display: inline-block;
         margin-top: 20px;
-        display: inline-block; /* Ensure the button/link is neatly placed */
+        padding: 12px 24px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
         text-decoration: none;
-        color: white; /* Make the button text stand out */
-        background-color: rgba(0, 0, 0, 0.7); /* Optional: Add a transparent dark background for better readability */
-        padding: 10px 20px;
         border-radius: 5px;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .verse-of-the-day a:hover {
+        background-color: rgba(0, 0, 0, 0.9); /* Darken button on hover */
+    }
+
+    @media (max-width: 768px) {
+        .verse-of-the-day h2 {
+            font-size: 1.5rem; /* Adjust font size for smaller screens */
+        }
+
+        .verse-of-the-day p {
+            font-size: 1rem; /* Adjust font size for smaller screens */
+        }
+
+        .verse-of-the-day a {
+            font-size: 0.9rem; /* Smaller font for the button */
+        }
     }
 </style>
 
@@ -61,4 +90,5 @@
     <p>"{{ verse.text }}"</p>
     <a href="{% url 'home' %}">Back to Home</a>
 </div>
+
 {% endblock %}
