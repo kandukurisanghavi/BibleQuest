@@ -7,54 +7,97 @@
     <title>Bible Quiz</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #e8ecf3, #f9f9f9);
+            color: #333;
         }
         .quiz-container {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 850px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
         .question {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
         }
         .question h3 {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 18px;
+            color: #34495e;
         }
         .question label {
             display: block;
-            margin-bottom: 5px;
+            margin: 6px 0;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
         }
         .correct-answer {
-            color: green;
+            color: #28a745;
             font-weight: bold;
         }
         .incorrect-answer {
-            color: red;
+            color: #dc3545;
             font-weight: bold;
         }
         .submit-btn {
             display: block;
-            margin: 20px 0;
-            padding: 10px 20px;
+            margin: 30px auto;
+            padding: 12px 30px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s, transform 0.3s;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
         .submit-btn:hover {
             background-color: #0056b3;
             transform: scale(1.05);
         }
         #result h2 {
+            text-align: center;
+            margin-top: 30px;
+            color: #2c3e50;
+        }
+        #email-form {
+            text-align: center;
             margin-top: 20px;
+        }
+        #email-form input[type="email"] {
+            padding: 8px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        #email-form button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #17a2b8;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #email-form button:hover {
+            background-color: #138496;
         }
     </style>
 </head>
@@ -126,7 +169,7 @@
                 <h2>Your score is: ${score} / ${Object.keys(answers).length}</h2>
                 <form id="email-form">
                     <label for="email">Do you want to send this report to your email?</label><br>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required><br><br>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required><br>
                     <button type="button" onclick="sendEmail(${score}, ${Object.keys(answers).length})">Send Email</button>
                 </form>
             `;
@@ -135,7 +178,8 @@
         function sendEmail(score, totalQuestions) {
             const email = document.getElementById('email').value;
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
+            const emailForm = document.getElementById('email-form');
+            
             fetch("{% url 'send_quiz_email' %}", {
                 method: "POST",
                 headers: {
@@ -152,6 +196,8 @@
             .then(data => {
                 if (data.success) {
                     alert("Quiz results sent to your email!");
+                    // Hide the email form after sending
+                    emailForm.style.display = 'none';
                 } else {
                     alert("Failed to send email. Please try again.");
                     console.error("Backend Error:", data.error);
@@ -162,6 +208,7 @@
                 alert("An error occurred. Please try again.");
             });
         }
+        
     </script>
 </body>
 </html>
