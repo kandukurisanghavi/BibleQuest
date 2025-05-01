@@ -87,14 +87,62 @@ def send_quiz_email(request):
             score = data.get('score')
             total_questions = data.get('total_questions')
 
-            subject = "Your Quiz Results"
+            subject = "Your Bible Quiz Results – Keep Growing in Faith"
             from_email = 'biblequesta@gmail.com'
             to_email = [email]
-            html_content = f"""
-                <h3>Thank you for taking the quiz </h3>
-                <p><strong> Your Score is :</strong> {score} out of {total_questions}</p>
+
+            # Define the closing signature
+            closing_signature = """
+                <br><br>
+                <p>In His Service,<br>
+                <strong>The Bible Quest Team</strong><br>
+                <em>Guiding You Closer to the Word</em></p>
             """
 
+            # Define the greeting message
+            greeting = """
+                <p>Dear Participant,</p>
+                <p>Thank you for taking the time to complete the Bible Quest quiz! We're so glad you're on this journey with us to grow deeper in God's Word.</p>
+            """
+
+            # Define the message based on score range
+            if score <= 3:
+                encouragement_message = """
+                    <h3>Thank You for Participating!</h3>
+                    <p>We appreciate you taking the time to complete the quiz. Your score of <strong>{score} out of {total_questions}</strong> shows you're on the right path. Keep going, and don't be discouraged – your understanding of the Bible will grow with every quiz!</p>
+                    <p><em>Remember, learning is a journey, and you're doing wonderfully by taking the first step!</em></p>
+                    <p>We encourage you to review the materials and try again to improve your score. Also, check out the <strong>Verse of the Day</strong> for daily inspiration.</p>
+                    <p>If you have any prayer requests, feel free to share them with us. We would love to support you!</p>
+                """ + closing_signature
+            elif score <= 6:
+                encouragement_message = """
+                    <h3>Well Done – You’re Doing Great!</h3>
+                    <p>You've earned a score of <strong>{score} out of {total_questions}</strong>. You're making excellent progress! Every quiz you take brings you closer to deepening your understanding of the Bible.</p>
+                    <p><em>Keep up the hard work, and soon you'll be mastering these quizzes with ease!</em></p>
+                    <p>We encourage you to take more quizzes to continue sharpening your knowledge! Also, check out the <strong>Verse of the Day</strong> for daily inspiration.</p>
+                    <p>Don’t forget, you can submit your prayer requests for our community to support you.</p>
+                """ + closing_signature
+            elif score <= 8:
+                encouragement_message = """
+                    <h3>Great Job – You're Almost There!</h3>
+                    <p>Your score of <strong>{score} out of {total_questions}</strong> shows you're quite knowledgeable about the Bible! A little more practice, and you’ll be reaching new heights in your understanding.</p>
+                    <p><em>Stay focused, and keep up the excellent work – you’re getting closer to Bible mastery!</em></p>
+                    <p>We encourage you to explore more quizzes to continue your learning journey. Don’t forget to check out the <strong>Verse of the Day</strong> for daily inspiration, and feel free to submit any prayer requests.</p>
+                    <p>Your prayer requests are always welcome and important to us.</p>
+                """ + closing_signature
+            else:
+                encouragement_message = """
+                    <h3>Exceptional – You’re a Bible Quiz Expert!</h3>
+                    <p>Congratulations! With a score of <strong>{score} out of {total_questions}</strong>, you’ve truly excelled! You clearly have a solid understanding of the Bible, and we are impressed by your dedication!</p>
+                    <p><em>Keep up the fantastic work – you're a true Bible scholar in the making!</em></p>
+                    <p>Continue to engage with the app to enhance your knowledge even further. Don’t forget to check out the <strong>Verse of the Day</strong> for daily inspiration, and if you ever need prayer, feel free to submit your requests.</p>
+                    <p>Your prayer requests are always valued, and we would love to support you.</p>
+                """ + closing_signature
+
+            # Combine greeting and encouragement
+            html_content = greeting + encouragement_message.format(score=score, total_questions=total_questions)
+
+            # Set up the email message
             email_message = EmailMultiAlternatives(subject, "Your quiz results are attached.", from_email, to_email)
             email_message.attach_alternative(html_content, "text/html")
             email_message.send()
@@ -103,7 +151,8 @@ def send_quiz_email(request):
         except Exception as e:
             print(f"Email sending failed: {e}")
             return JsonResponse({'success': False, 'error': str(e)})
-        
+
+
 from django.http import HttpResponse
 from io import BytesIO
 from reportlab.pdfgen import canvas
