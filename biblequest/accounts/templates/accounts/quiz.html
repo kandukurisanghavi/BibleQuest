@@ -168,7 +168,7 @@
             resultDiv.innerHTML = `
                 <h2>Your score is: ${score} / ${Object.keys(answers).length}</h2>
                 <form id="email-form">
-                    <label for="email">Do you want to send this report to your email?</label><br>
+                    <label for="email">Would you like to receive your quiz score via email?</label><br>
                     <input type="email" id="email" name="email" placeholder="Enter your email" required><br>
                     <button type="button" onclick="sendEmail(${score}, ${Object.keys(answers).length})">Send Email</button>
                 </form>
